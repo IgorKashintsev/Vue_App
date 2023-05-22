@@ -1,43 +1,56 @@
 <template>
   <div class="paginate">
+    <a class="arrow left" href="#" @click="previousPage">
+      <img src="../assets/images/ArrowLeft.svg" alt="ArrowLeft">
+    </a>
     <a
       href="#"
       class="page-link"
       :class="{ 'page-link_active': page === currentPage }"
-      v-for="page of pagCount" :key="page"
+      v-for="page of pageCount" :key="page"
       @click="selectPage(page)"
     >
       {{ page }}
+    </a>
+    <a class="arrow right" href="#" @click="nextPage">
+      <img src="../assets/images/ArrowRight.svg" alt="ArrowRight">
     </a>
   </div>
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex';
+
 export default {
   name: 'PaginationForm',
-  props: {
-    items: {
-      type: Array,
-      required: true,
-      default: () => ([]),
+  methods: {
+    ...mapActions([
+      'setCurrentPage',
+    ]),
+    selectPage(page) {
+      this.setCurrentPage(page);
     },
-    currentPage: {
-      type: Number,
-      required: true,
+    previousPage() {
+      if (this.currentPage > 1) {
+        this.setCurrentPage(this.currentPage - 1);
+      }
+      return;
     },
-    pageSize: {
-      type: Number,
-      default: 5,
+    nextPage() {
+      if (this.currentPage < this.pageCount) {
+        this.setCurrentPage(this.currentPage + 1);
+      }
+      return;
     },
   },
   computed: {
-    pagCount() {
-      return Math.ceil(this.items.length / this.pageSize);
-    },
-  },
-  methods: {
-    selectPage(page) {
-      this.$emit('pagechanged', page);
+    ...mapGetters([
+      'currentPage',
+      'pageSize',
+      'paymentsList',
+    ]),
+    pageCount() {
+      return Math.ceil(this.paymentsList.length / this.pageSize);
     },
   },
 };
@@ -47,6 +60,10 @@ export default {
 .paginate {
   display: flex;
   justify-content: center;
+  max-width: 720px;
+  border-bottom: 1px solid #EAEAEA;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 .page-link {
   display: flex;
@@ -63,5 +80,14 @@ export default {
     color: dodgerblue;
     font-weight: 500;
    }
+}
+.arrow {
+  padding-top: 5px;
+}
+.left {
+  margin-right: 15px;
+}
+.right {
+  margin-left: 15px;
 }
 </style>

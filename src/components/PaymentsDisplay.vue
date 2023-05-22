@@ -16,31 +16,31 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex';
+
 export default {
   name: 'PaymentsDisplay',
-  props: {
-    items: {
-      type: Array,
-      required: true,
-      default: () => ([]),
-    },
-    currentPage: {
-      type: Number,
-      required: true,
-    },
-    pageSize: {
-      type: Number,
-      default: 5,
-    },
+  methods: {
+    ...mapActions([
+      'fetchData',
+    ]),
   },
   computed: {
+    ...mapGetters([
+      'paymentsList',
+      'currentPage',
+      'pageSize',
+    ]),
     pageList() {
       const { currentPage, pageSize } = this;
       const start = (currentPage - 1) * pageSize;
       const end = start + pageSize;
 
-      return this.items.slice(start, end);
+      return this.paymentsList.slice(start, end);
     },
+  },
+  created() {
+    this.fetchData();
   },
 };
 </script>
